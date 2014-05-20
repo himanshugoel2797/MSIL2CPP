@@ -1,0 +1,13 @@
+<MSIL>
+<namespace NAME="Test">
+<class NAME="Program">
+<method NAME="default void Main ()">
+<IL instruction="nop"></IL>
+<IL instruction="ldstr &quot;Hello World!&quot;"></IL>
+<IL instruction="call void class [mscorlib]System.Console::Write(string)"></IL>
+<IL instruction="nop"></IL>
+<IL instruction="ret"></IL>
+</method>
+</class>
+</namespace>
+</MSIL>

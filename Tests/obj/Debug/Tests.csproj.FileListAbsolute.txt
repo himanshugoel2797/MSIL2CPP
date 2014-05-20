@@ -1,0 +1,4 @@
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\Tests\bin\Debug\Tests.dll
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\Tests\bin\Debug\Tests.pdb
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\Tests\obj\Debug\Tests.dll
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\Tests\obj\Debug\Tests.pdb

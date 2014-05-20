@@ -1,0 +1,76 @@
+.assembly extern mscorlib
+{
+  .ver 4:0:0:0
+  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 ) // .z\V.4..
+}
+.assembly 'Tests'
+{
+  .custom instance void class [mscorlib]System.Runtime.Versioning.TargetFrameworkAttribute::'.ctor'(string) =  (
+		01 00 1A 2E 4E 45 54 46 72 61 6D 65 77 6F 72 6B   // ....NETFramework
+		2C 56 65 72 73 69 6F 6E 3D 76 34 2E 35 01 00 54   // ,Version=v4.5..T
+		0E 14 46 72 61 6D 65 77 6F 72 6B 44 69 73 70 6C   // ..FrameworkDispl
+		61 79 4E 61 6D 65 12 2E 4E 45 54 20 46 72 61 6D   // ayName..NET Fram
+		65 77 6F 72 6B 20 34 2E 35                      ) // ework 4.5
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyTitleAttribute::'.ctor'(string) =  (01 00 05 54 65 73 74 73 00 00 ) // ...Tests..
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyDescriptionAttribute::'.ctor'(string) =  (01 00 00 00 00 ) // .....
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyConfigurationAttribute::'.ctor'(string) =  (01 00 00 00 00 ) // .....
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyCompanyAttribute::'.ctor'(string) =  (01 00 00 00 00 ) // .....
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyProductAttribute::'.ctor'(string) =  (01 00 05 54 65 73 74 73 00 00 ) // ...Tests..
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyCopyrightAttribute::'.ctor'(string) =  (
+		01 00 12 43 6F 70 79 72 69 67 68 74 20 C2 A9 20   // ...Copyright .. 
+		20 32 30 31 34 00 00                            ) //  2014..
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyTrademarkAttribute::'.ctor'(string) =  (01 00 00 00 00 ) // .....
+
+  .custom instance void class [mscorlib]System.Runtime.InteropServices.ComVisibleAttribute::'.ctor'(bool) =  (01 00 00 00 00 ) // .....
+
+  .custom instance void class [mscorlib]System.Runtime.InteropServices.GuidAttribute::'.ctor'(string) =  (
+		01 00 24 30 37 34 61 35 66 61 65 2D 31 34 63 33   // ..$074a5fae-14c3
+		2D 34 61 61 35 2D 38 64 39 32 2D 61 33 35 30 37   // -4aa5-8d92-a3507
+		31 39 65 35 33 61 63 00 00                      ) // 19e53ac..
+
+  .custom instance void class [mscorlib]System.Reflection.AssemblyFileVersionAttribute::'.ctor'(string) =  (01 00 07 31 2E 30 2E 30 2E 30 00 00 ) // ...1.0.0.0..
+
+  .custom instance void class [mscorlib]System.Diagnostics.DebuggableAttribute::'.ctor'(valuetype [mscorlib]System.Diagnostics.DebuggableAttribute/DebuggingModes) =  (01 00 07 01 00 00 00 00 ) // ........
+
+  .custom instance void class [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::'.ctor'(int32) =  (01 00 08 00 00 00 00 00 ) // ........
+
+  .custom instance void class [mscorlib]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute::'.ctor'() =  (
+		01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
+		63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01       ) // ceptionThrows.
+
+  .hash algorithm 0x00008004
+  .ver  1:0:0:0
+}
+.module Tests.dll // GUID = {8C83964A-7236-4F72-BBFF-5597EE321E85}
+
+
+.namespace Test
+{
+  .class public auto ansi abstract sealed beforefieldinit Program
+  	extends [mscorlib]System.Object
+  {
+
+    // method line 1
+    .method public static hidebysig 
+           default void Main ()  cil managed 
+    {
+        // Method begins at RVA 0x2050
+	// Code size 13 (0xd)
+	.maxstack 8
+	IL_0000:  nop 
+	IL_0001:  ldstr "Hello World!"
+	IL_0006:  call void class [mscorlib]System.Console::Write(string)
+	IL_000b:  nop 
+	IL_000c:  ret 
+    } // end of method Program::Main
+
+  } // end of class Test.Program
+}
+

@@ -1,0 +1,76 @@
+﻿.assembly extern mscorlib
+{
+  .ver 4:0:0:0
+  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 ) // .z\V.4..
+}
+.assembly 'Tests'
+{
+  .custom instance void class [mscorlib]System.Diagnostics.DebuggableAttribute::'.ctor'(valuetype [mscorlib]System.Diagnostics.DebuggableAttribute/DebuggingModes) =  (01 00 02 01 00 00 00 00 ) // ........
+
+  .custom instance void class [mscorlib]System.Runtime.Versioning.TargetFrameworkAttribute::'.ctor'(string) =  (
+		01 00 1A 2E 4E 45 54 46 72 61 6D 65 77 6F 72 6B   // ....NETFramework
+		2C 56 65 72 73 69 6F 6E 3D 76 34 2E 35 01 00 54   // ,Version=v4.5..T
+		0E 14 46 72 61 6D 65 77 6F 72 6B 44 69 73 70 6C   // ..FrameworkDispl
+		61 79 4E 61 6D 65 12 2E 4E 45 54 20 46 72 61 6D   // ayName..NET Fram
+		65 77 6F 72 6B 20 34 2E 35                      ) // ework 4.5
+
+  .custom instance void class [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::'.ctor'(int32) =  (01 00 08 00 00 00 00 00 ) // ........
+
+  .custom instance void class [mscorlib]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute::'.ctor'() =  (
+		01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
+		63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01       ) // ceptionThrows.
+
+  .permissionset reqmin = {[mscorlib]System.Security.Permissions.SecurityPermissionAttribute = {property bool 'SkipVerification' = bool(true)}}
+  .hash algorithm 0x00008004
+  .ver  0:0:0:0
+}
+.module Tests.dll // GUID = {60EB5526-259D-436A-AA02-084873619993}
+
+.custom instance void class [mscorlib]System.Security.UnverifiableCodeAttribute::'.ctor'() =  (01 00 00 00 ) // ....
+
+
+.namespace Tests
+{
+  .class public auto ansi abstract sealed beforefieldinit Program
+  	extends [mscorlib]System.Object
+  {
+
+    // method line 1
+    .method public static hidebysig 
+           default void 'nop' ()  cil managed 
+    {
+        // Method begins at RVA 0x2050
+	// Code size 2 (0x2)
+	.maxstack 8
+	IL_0000:  nop 
+	IL_0001:  ret 
+    } // end of method Program::nop
+
+    // method line 2
+    .method public static hidebysig 
+           default void Main ()  cil managed 
+    {
+        // Method begins at RVA 0x2054
+	// Code size 33 (0x21)
+	.maxstack 1
+	.locals init (
+		int32*	V_0,
+		string	V_1)
+	IL_0000:  nop 
+	IL_0001:  ldc.i4 4456448
+	IL_0006:  conv.i 
+	IL_0007:  stloc.0 
+	IL_0008:  ldstr "Hello World!"
+	IL_000d:  stloc.1 
+	IL_000e:  ldloc.1 
+	IL_000f:  call void class [mscorlib]System.Console::Write(string)
+	IL_0014:  nop 
+	IL_0015:  ldstr "Hello"
+	IL_001a:  call void class [mscorlib]System.Console::Write(string)
+	IL_001f:  nop 
+	IL_0020:  ret 
+    } // end of method Program::Main
+
+  } // end of class Tests.Program
+}
+
