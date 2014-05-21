@@ -19,9 +19,12 @@ namespace MSIL2C
             code = IL.GetMSIL("Tests.dll");
 #elif DEBUG
             code = File.ReadAllText("tests.txt");
+#else
+            code = IL.GetMSIL(args[0]);
 #endif
             Tokenizer t = new Tokenizer();
             string xml = t.Tokenize(code);
+            File.Delete("output.txt");
             File.WriteAllText("output.txt", xml);
 #if DEBUG && TESTS
             Process.Start("notepad.exe", "temp.txt");
@@ -29,10 +32,6 @@ namespace MSIL2C
 #endif
             CodeGenerator gen = new CodeGenerator();
             string final = gen.GenerateCode(xml);
-            File.WriteAllText("final.txt", final);
-#if DEBUG
-            Process.Start("notepad.exe", "final.txt");
-#endif
         }
     }
 }

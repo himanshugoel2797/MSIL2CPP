@@ -8,10 +8,17 @@
 <IL instruction="nop"></IL>
 <IL instruction="ldc.i4.s 0x64"></IL>
 <IL instruction="stloc.0"></IL>
-<IL instruction="ldstr &quot;lol&quot;"></IL>
+<IL instruction="ldstr &quot;lol {0}&quot;"></IL>
 <IL instruction="stloc.1"></IL>
+<IL instruction="ldloc.1"></IL>
 <IL instruction="ldloc.0"></IL>
-<IL instruction="call void class [mscorlib]System.Console::Write(int32)"></IL>
+<IL instruction="box [mscorlib]System.Int32"></IL>
+<IL instruction="call void class [mscorlib]System.Console::Write(string, object)"></IL>
+<IL instruction="nop"></IL>
+<IL instruction="ldloca.s 0"></IL>
+<IL instruction="call instance string int32::ToString()"></IL>
+<IL instruction="ldloc.1"></IL>
+<IL instruction="call void class [mscorlib]System.Console::Write(string, object)"></IL>
 <IL instruction="nop"></IL>
 <IL instruction="ret"></IL>
 </method>

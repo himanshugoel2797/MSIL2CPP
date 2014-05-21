@@ -17,6 +17,7 @@ namespace MSIL2C
         Dictionary<string, IL2C> ILTranslators;
         Dictionary<string, string> Vars;
         StreamWriter f, h;
+        int tmpCount = 0;
 
         public CodeGenerator()
         {
@@ -29,24 +30,56 @@ namespace MSIL2C
             };
             ILTranslators["call"] = (string s) =>
             {
+                #region Call handler
                 string function = s.Remove("call").Trim();
                 string[] args = null;
+                bool earlyReturn = false;
 
                 //remove the library name
                 if (function.Contains('[') && function.Contains(']')) function = function.Remove(function.IndexOf('['), function.IndexOf(']') - function.IndexOf('[') + 1).Trim();
                 function = function.Replace(".", "::");
 
+                //If the call is an object instance call
+                if (function.Split(' ')[0].Trim() == "instance")
+                {
+                    function.Remove("instance");
+
+                    //We need a temporary variable to store the temporary return value
+                    if (function.Split(' ')[1].Trim() != "void") function = function.Split(' ')[1] + " v_" + tmpCount.ToString() + " = ";
+                    function += ArgStack.Pop() + "." + s.Split(':')[2];
+                    ArgStack.Push("v_" + tmpCount.ToString());
+                    tmpCount++;
+                    earlyReturn = true;
+                }
+
                 //Separate the args from the rest of the function call for separate handling
-                args = function.Substring(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim().Split(',');
+                args = function.Substring(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim().Remove("(").Remove(")").Split(',');
                 function = function.Remove(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim();
 
                 //Add the arguments from the stack
-                function += "(";
-                for (int counter = 0; counter < args.Length; counter++)
+                var tmpArgStack = new Stack<string>(ArgStack);  //MSIL seems to reverse the argument order from the stack
+                var argList = new List<string>(ArgStack);       //We need a temporary list to make sure we don't mess up anything
+
+                function += "(";    //Setup opening bracket
+                if (args.Length > 0 && args[0] != "")
                 {
-                    function += ArgStack.Pop() + ",";
+                    //Setup the arguments if any
+                    for (int counter = 0; counter < args.Length; counter++)
+                    {
+                        string arg = tmpArgStack.Pop();
+                        argList.Remove(arg);    //Remove the argument from the original stack too
+                        function += arg + ",";
+                    }
+                    ArgStack = new Stack<string>(argList);  //rebuild the stack so we don't miss anything
+                }
+                else
+                {
+                    function += ",";    //Just append a random character
                 }
                 function = function.Remove(function.Length - 1) + ");";
+
+                //Return without setting up return values
+                if (earlyReturn) return function;
 
                 //Setup the return value cast
                 function = function.Replace(function.Split(' ')[0], "(" + function.Split(' ')[0] + ")");
@@ -55,6 +88,7 @@ namespace MSIL2C
                 function = function.Remove("class").Trim();
 
                 return function;
+                #endregion
             };
             ILTranslators["ldstr"] = (string s) =>
             {
@@ -67,14 +101,21 @@ namespace MSIL2C
             };
             ILTranslators["ldloc"] = (string s) =>
             {
+                if (s.StartsWith("ldloca.s"))
+                {
+                    ArgStack.Push("V_" + s.Remove("ldloca.s").Trim());
+                }
+                else if(s.StartsWith("ldloc."))
+                {
                     ArgStack.Push("V_" + s.Remove("ldloc.").Trim());
+                }
                     return string.Empty;
             };
             ILTranslators["ldc.i4.s"] = (string s) =>
-                {
-                    ArgStack.Push(s.Remove("ldc.i4.s").Trim());
-                    return string.Empty;
-                };
+            {
+                ArgStack.Push(s.Remove("ldc.i4.s").Trim());
+                return string.Empty;
+            };
             #endregion
         }
 

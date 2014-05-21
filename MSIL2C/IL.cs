@@ -12,10 +12,17 @@ namespace MSIL2C
     {
         public static string GetMSIL(string file)
         {
-            Process.Start("monodis", "--output=temp.txt \"" + file + "\"");
-            string toRet = File.ReadAllText("temp.txt");
-#if !DEBUG
-            File.Delete("temp.txt");
+            Process p = new Process();
+            p.StartInfo.FileName = "monodis";
+            p.StartInfo.Arguments = "\"" + file + "\"";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
+            p.WaitForExit();
+            string toRet = p.StandardOutput.ReadToEnd();
+#if DEBUG
+            File.WriteAllText("temp.txt", toRet);
 #endif
             return toRet;
         }
