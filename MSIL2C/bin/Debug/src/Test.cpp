@@ -1,3 +1,3 @@
 #include "Test.h"
-namespace Test{
+void Test::Program::Main(){
 }

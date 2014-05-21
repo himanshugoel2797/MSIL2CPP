@@ -23,6 +23,9 @@ namespace MSIL2C
 
             StreamWriter f = null, h = null;
 
+            string @namespace = "";
+            string @class = "";
+
             #region Usings and stuff
             using (MemoryStream ms = new MemoryStream(Encoding.ASCII.GetBytes(xml)))
             {
@@ -45,12 +48,21 @@ namespace MSIL2C
                                     #endregion
 
                                     f.WriteLine("#include \"" + doc["NAME"] + ".h\"");
-                                    f.WriteLine("namespace " + doc["NAME"] + "{");
-                                    DepthF.Push("}");
-
+                                    @namespace = doc["NAME"];
                                     h.WriteLine("namespace " + doc["NAME"] + "{");
                                     DepthH.Push("}");
 
+                                    break;
+                                case "class":
+                                    h.WriteLine("class " + doc["NAME"] + "{");
+                                    @class = doc["NAME"];
+                                    DepthH.Push("}");
+                                    break;
+                                case "method":
+                                    h.WriteLine(doc["VISIBILITY"] + " " + doc["SCOPE"] + " " + doc["RETURN"] + " " + doc["NAME"] + ";");
+
+                                    f.WriteLine(doc["RETURN"] + " " + @namespace + "::" + @class + "::" + doc["NAME"] + "{");
+                                    DepthF.Push("}");
                                     break;
                             }
 

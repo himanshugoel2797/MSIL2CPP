@@ -29,9 +29,10 @@ namespace MSIL2C
             };
             Tokens[".method"] = (string s) =>
             {
-                string nxtLine = PeekNextLine().Remove("cil managed").Trim();
+                s = s.Remove(".method").Remove("hidebysig").Trim();
+                string[] nxtLine = (s + " " + PeekNextLine().Remove("cil managed").Remove(0, 7).Trim()).Split(' ');
                 Depth.Push("</method>");
-                return "<method NAME=\"" + nxtLine + "\">";
+                return "<method VISIBILITY=\"" + nxtLine[0] + "\" RETURN=\"" + nxtLine[2] + "\" SCOPE=\"" + nxtLine[1] + "\" NAME=\"" + nxtLine[3] + nxtLine[4] + "\">";
             };
             Tokens["IL_"] = (string s) =>
                 {
