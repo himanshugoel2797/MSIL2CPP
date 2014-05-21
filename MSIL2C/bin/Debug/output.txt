@@ -2,9 +2,16 @@
 <namespace NAME="Test">
 <class NAME="Program">
 <method VISIBILITY="public" RETURN="void" SCOPE="static" NAME="Main()">
+<VAR TYPE="int32" NAME="V_0"></VAR>
+<VAR TYPE="string" NAME="V_1"></VAR>
+
 <IL instruction="nop"></IL>
-<IL instruction="ldstr &quot;Hello World!&quot;"></IL>
-<IL instruction="call void class [mscorlib]System.Console::Write(string)"></IL>
+<IL instruction="ldc.i4.s 0x64"></IL>
+<IL instruction="stloc.0"></IL>
+<IL instruction="ldstr &quot;lol&quot;"></IL>
+<IL instruction="stloc.1"></IL>
+<IL instruction="ldloc.0"></IL>
+<IL instruction="call void class [mscorlib]System.Console::Write(int32)"></IL>
 <IL instruction="nop"></IL>
 <IL instruction="ret"></IL>
 </method>

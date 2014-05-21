@@ -15,6 +15,7 @@ namespace MSIL2C
         Stack<string> DepthF, DepthH, ArgStack;
         public delegate string IL2C(string line);
         Dictionary<string, IL2C> ILTranslators;
+        Dictionary<string, string> Vars;
         StreamWriter f, h;
 
         public CodeGenerator()
@@ -30,7 +31,7 @@ namespace MSIL2C
             {
                 string function = s.Remove("call").Trim();
                 string[] args = null;
-                
+
                 //remove the library name
                 if (function.Contains('[') && function.Contains(']')) function = function.Remove(function.IndexOf('['), function.IndexOf(']') - function.IndexOf('[') + 1).Trim();
                 function = function.Replace(".", "::");
@@ -60,6 +61,20 @@ namespace MSIL2C
                 ArgStack.Push(s.Remove("ldstr").Trim());
                 return string.Empty;
             };
+            ILTranslators["stloc"] = (string s) =>
+            {
+                return Vars["V_" + s.Remove("stloc.").Trim()] + " V_" + s.Remove("stloc.").Trim() + " = " + ArgStack.Pop() + ";";
+            };
+            ILTranslators["ldloc"] = (string s) =>
+            {
+                    ArgStack.Push("V_" + s.Remove("ldloc.").Trim());
+                    return string.Empty;
+            };
+            ILTranslators["ldc.i4.s"] = (string s) =>
+                {
+                    ArgStack.Push(s.Remove("ldc.i4.s").Trim());
+                    return string.Empty;
+                };
             #endregion
         }
 
@@ -108,12 +123,16 @@ namespace MSIL2C
                                     h.WriteLine("class " + doc["NAME"] + "{");
                                     @class = doc["NAME"];
                                     DepthH.Push("}");
+                                    Vars = new Dictionary<string, string>();
                                     break;
                                 case "method":
                                     h.WriteLine(doc["VISIBILITY"] + ":\n\t" + doc["SCOPE"] + " " + doc["RETURN"] + " " + doc["NAME"] + ";");
 
                                     f.WriteLine(doc["RETURN"] + " " + @namespace + "::" + @class + "::" + doc["NAME"] + "{");
                                     DepthF.Push("}");
+                                    break;
+                                case "VAR":
+                                    Vars.Add(doc["NAME"], doc["TYPE"]);
                                     break;
                                 case "IL":
                                     foreach (string key in ILTranslators.Keys)

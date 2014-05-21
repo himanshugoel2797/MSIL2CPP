@@ -44,6 +44,31 @@ namespace MSIL2C
                     if (Depth.Count != 0) return Depth.Pop();
                     else return "";
                 };
+
+            Tokens[".locals init"] = (string s) =>
+                {
+                    //Get everything on one line
+                    string vars = PeekNextLine();
+                    while (!vars.EndsWith(")"))
+                    {
+                        vars += PeekNextLine().Trim();
+                    }
+
+                    //Remove extra things
+                    vars = vars.Remove(vars.Length - 1);
+
+                    //Separate all the variable declarations
+                    string[] tmpA = vars.Split(',');
+
+                    //Generate the xml code for all the variable definitions
+                    string final = "";
+                    for (int c = 0; c < tmpA.Length; c++)
+                    {
+                        final += "<VAR TYPE=\"" + tmpA[c].Split('\t')[0] + "\" NAME=\"" + tmpA[c].Split('\t')[1] + "\"></VAR>\n" ;
+                    }
+
+                    return final;
+                };
             #endregion
         }
 
