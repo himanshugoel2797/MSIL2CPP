@@ -1,5 +1,8 @@
-namespace Test{
-class Program{
-public static void Main();
+namespace Test
+{
+class Program
+{
+public:
+    static void Main();
 }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,18 +11,68 @@ namespace MSIL2C
 {
     public class CodeGenerator
     {
-        public CodeGenerator() { }
 
-        Stack<string> DepthF, DepthH;
+        Stack<string> DepthF, DepthH, ArgStack;
+        public delegate string IL2C(string line);
+        Dictionary<string, IL2C> ILTranslators;
+        StreamWriter f, h;
+
+        public CodeGenerator()
+        {
+            ILTranslators = new Dictionary<string, IL2C>();
+
+            #region IL Translators
+            ILTranslators["nop"] = (string s) =>
+            {
+                return string.Empty;
+            };
+            ILTranslators["call"] = (string s) =>
+            {
+                string function = s.Remove("call").Trim();
+                string[] args = null;
+                
+                //remove the library name
+                if (function.Contains('[') && function.Contains(']')) function = function.Remove(function.IndexOf('['), function.IndexOf(']') - function.IndexOf('[') + 1).Trim();
+                function = function.Replace(".", "::");
+
+                //Separate the args from the rest of the function call for separate handling
+                args = function.Substring(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim().Split(',');
+                function = function.Remove(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim();
+
+                //Add the arguments from the stack
+                function += "(";
+                for (int counter = 0; counter < args.Length; counter++)
+                {
+                    function += ArgStack.Pop() + ",";
+                }
+                function = function.Remove(function.Length - 1) + ");";
+
+                //Setup the return value cast
+                function = function.Replace(function.Split(' ')[0], "(" + function.Split(' ')[0] + ")");
+
+                //Remove extra data
+                function = function.Remove("class").Trim();
+
+                return function;
+            };
+            ILTranslators["ldstr"] = (string s) =>
+            {
+                ArgStack.Push(s.Remove("ldstr").Trim());
+                return string.Empty;
+            };
+            #endregion
+        }
 
         public string GenerateCode(string xml)
         {
             DepthF = new Stack<string>();
             DepthH = new Stack<string>();
+            ArgStack = new Stack<string>();
 
             StringBuilder final = new StringBuilder();
 
-            StreamWriter f = null, h = null;
+            f = null;
+            h = null;
 
             string @namespace = "";
             string @class = "";
@@ -41,7 +92,7 @@ namespace MSIL2C
                             {
                                 case "namespace":
                                     #region Files
-                                    if(!Directory.Exists("src"))Directory.CreateDirectory("src");
+                                    if (!Directory.Exists("src")) Directory.CreateDirectory("src");
                                     Array.ForEach(Directory.GetFiles(@"src"), delegate(string path) { File.Delete(path); });
                                     f = new StreamWriter(Path.Combine("src", doc["NAME"] + ".cpp"));
                                     h = new StreamWriter(Path.Combine("src", doc["NAME"] + ".h"));
@@ -59,10 +110,21 @@ namespace MSIL2C
                                     DepthH.Push("}");
                                     break;
                                 case "method":
-                                    h.WriteLine(doc["VISIBILITY"] + " " + doc["SCOPE"] + " " + doc["RETURN"] + " " + doc["NAME"] + ";");
+                                    h.WriteLine(doc["VISIBILITY"] + ":\n\t" + doc["SCOPE"] + " " + doc["RETURN"] + " " + doc["NAME"] + ";");
 
                                     f.WriteLine(doc["RETURN"] + " " + @namespace + "::" + @class + "::" + doc["NAME"] + "{");
                                     DepthF.Push("}");
+                                    break;
+                                case "IL":
+                                    foreach (string key in ILTranslators.Keys)
+                                    {
+                                        //if it is, call the appropriate handler and update the tokens
+                                        if (doc["instruction"].StartsWith(key))
+                                        {
+                                            string output = ILTranslators[key](doc["instruction"]);
+                                            if (!string.IsNullOrWhiteSpace(output)) f.WriteLine(output);
+                                        }
+                                    }
                                     break;
                             }
 
@@ -87,6 +149,8 @@ namespace MSIL2C
 
             f.Dispose();
             h.Dispose();
+
+            Process.Start("AStyle", "--style=allman --recursive  src/*.cpp  src/*.h");
 
             return final.ToString();
         }

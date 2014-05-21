@@ -48,7 +48,7 @@
   .hash algorithm 0x00008004
   .ver  1:0:0:0
 }
-.module Tests.dll // GUID = {8C83964A-7236-4F72-BBFF-5597EE321E85}
+.module Tests.dll // GUID = {2E97580E-EBFE-498A-AAC0-ABD049E81519}
 
 
 .namespace Test
