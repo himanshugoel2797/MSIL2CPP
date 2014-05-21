@@ -19,8 +19,13 @@ namespace MSIL2C
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.CreateNoWindow = true;
             p.Start();
-            p.WaitForExit();
-            string toRet = p.StandardOutput.ReadToEnd();
+            
+            string toRet = p.StandardOutput.ReadLine();
+            while (!p.HasExited && !p.StandardOutput.EndOfStream)
+            {
+                toRet += p.StandardOutput.ReadLine();
+            }
+            toRet += p.StandardOutput.ReadToEnd();
 #if DEBUG
             File.WriteAllText("temp.txt", toRet);
 #endif

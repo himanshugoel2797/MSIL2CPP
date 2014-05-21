@@ -8,8 +8,11 @@ namespace Test
         {
             int temp = 100;
             string t2 = "lol {0}";
+            string tmp;
             Console.Write(t2, temp);
-            Console.Write(temp.ToString(), t2);
+            tmp = temp.ToString();
+            tmp += " ";
+            Console.Write(tmp, t2);
         }
     }
 }

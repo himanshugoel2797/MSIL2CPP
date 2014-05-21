@@ -40,20 +40,22 @@ namespace MSIL2C
                 function = function.Replace(".", "::");
 
                 //If the call is an object instance call
-                if (function.Split(' ')[0].Trim() == "instance")
+                if (function.Split(' ')[0].Trim() == "instance" || function.Split(' ')[0].Trim() != "void")
                 {
-                    function.Remove("instance");
+                    function = function.Remove("instance").Trim();
 
                     //We need a temporary variable to store the temporary return value
-                    if (function.Split(' ')[1].Trim() != "void") function = function.Split(' ')[1] + " v_" + tmpCount.ToString() + " = ";
+                    if (function.Split(' ')[0].Trim() != "void") function = function.Split(' ')[0] + " v_" + tmpCount.ToString() + " = ";
                     function += ArgStack.Pop() + "." + s.Split(':')[2];
+
+                    //The return value is always pushed on the stack in C#
                     ArgStack.Push("v_" + tmpCount.ToString());
                     tmpCount++;
                     earlyReturn = true;
                 }
 
                 //Separate the args from the rest of the function call for separate handling
-                args = function.Substring(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim().Remove("(").Remove(")").Split(',');
+                args = function.Substring(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Remove("(").Remove(")").Split(',');
                 function = function.Remove(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim();
 
                 //Add the arguments from the stack
@@ -64,7 +66,7 @@ namespace MSIL2C
                 if (args.Length > 0 && args[0] != "")
                 {
                     //Setup the arguments if any
-                    for (int counter = 0; counter < args.Length; counter++)
+                    for (int counter = 0; counter < args.Length - 1; counter++)
                     {
                         string arg = tmpArgStack.Pop();
                         argList.Remove(arg);    //Remove the argument from the original stack too
@@ -97,7 +99,9 @@ namespace MSIL2C
             };
             ILTranslators["stloc"] = (string s) =>
             {
-                return Vars["V_" + s.Remove("stloc.").Trim()] + " V_" + s.Remove("stloc.").Trim() + " = " + ArgStack.Pop() + ";";
+                string toRet = Vars["V_" + s.Remove("stloc.").Trim()] + " V_" + s.Remove("stloc.").Trim() + " = " + ArgStack.Pop() + ";";
+                Vars["V_" + s.Remove("stloc.").Trim()] = "";
+                return toRet;
             };
             ILTranslators["ldloc"] = (string s) =>
             {
