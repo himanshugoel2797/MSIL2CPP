@@ -12,5 +12,23 @@ namespace MSIL2C
         {
             return s.Replace(toRemove, string.Empty);
         }
+
+        public static string RemoveRange(this string s, char start, char end)
+        {
+            if (s.Contains(start) && s.Contains(end))
+            {
+                return s.Remove(s.IndexOf(start), s.IndexOf(end) - s.IndexOf(start) + 1);
+            }
+            else return s;
+        }
+
+        public static string SubstringRange(this string s, char start, char end)
+        {
+            if (s.Contains(start) && s.Contains(end))
+            {
+                return s.Substring(s.IndexOf(start), s.IndexOf(end) - s.IndexOf(start) + 1);
+            }
+            else return "";
+        }
     }
 }

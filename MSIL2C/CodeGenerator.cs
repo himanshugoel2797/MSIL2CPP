@@ -31,63 +31,54 @@ namespace MSIL2C
             ILTranslators["call"] = (string s) =>
             {
                 #region Call handler
-                string function = s.Remove("call").Trim();
-                string[] args = null;
-                bool earlyReturn = false;
+                string function = s.Remove("call").RemoveRange('[', ']').Trim();
+                string args = function.SubstringRange('(', ')').Remove("(").Remove(")").Trim();
+                bool isInstance = false;
 
-                //remove the library name
-                if (function.Contains('[') && function.Contains(']')) function = function.Remove(function.IndexOf('['), function.IndexOf(']') - function.IndexOf('[') + 1).Trim();
-                function = function.Replace(".", "::");
-
-                //If the call is an object instance call
-                if (function.Split(' ')[0].Trim() == "instance" || function.Split(' ')[0].Trim() != "void")
+                if (function.StartsWith("instance"))
                 {
                     function = function.Remove("instance").Trim();
+                    function = function.Replace(function.Substring(function.LastIndexOf(' '), function.IndexOf(':') - function.LastIndexOf(' ') + 1), " " + ArgStack.Pop());
+                    function = function.Replace(':', '.');
+                    isInstance = true;
+                }
 
-                    //We need a temporary variable to store the temporary return value
-                    if (function.Split(' ')[0].Trim() != "void") function = function.Split(' ')[0] + " v_" + tmpCount.ToString() + " = ";
-                    function += ArgStack.Pop() + "." + s.Split(':')[2];
+                if (function.Contains(" class"))
+                {
+                    function = function.Remove(" class").Trim();
+                }
 
-                    //The return value is always pushed on the stack in C#
+                string retVal = function.Split(' ')[0].Trim();
+                int argc = (args == "")? 0: args.Split(',').Length;
+                string funcName = function.Remove(function.IndexOf(retVal), retVal.Length).Remove("(" + args + ")").Trim();
+                if(!isInstance)funcName = funcName.Replace(".", "::");
+
+                function = funcName + "(";
+                if (argc > 0)
+                {
+                    List<string> argStack = ArgStack.ToList();
+                    argStack.Reverse();
+                    for (int c = 0; c < argc - 1; c++)
+                    {
+                        function += argStack[c] + ", ";
+                    }
+                    function += argStack[argc - 1];
+
+                    for (int c = 0; c < argc; c++)
+                    {
+                        argStack.RemoveAt(0);
+                    }
+                    argStack.Reverse();
+                    ArgStack = new Stack<string>(argStack);
+                }
+                function += ");";
+
+                if (retVal != "void")
+                {
+                    function = retVal + " v_" + tmpCount.ToString() + " = " + function;
                     ArgStack.Push("v_" + tmpCount.ToString());
                     tmpCount++;
-                    earlyReturn = true;
                 }
-
-                //Separate the args from the rest of the function call for separate handling
-                args = function.Substring(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Remove("(").Remove(")").Split(',');
-                function = function.Remove(function.IndexOf('('), function.IndexOf(')') - function.IndexOf('(') + 1).Trim();
-
-                //Add the arguments from the stack
-                var tmpArgStack = new Stack<string>(ArgStack);  //MSIL seems to reverse the argument order from the stack
-                var argList = new List<string>(ArgStack);       //We need a temporary list to make sure we don't mess up anything
-
-                function += "(";    //Setup opening bracket
-                if (args.Length > 0 && args[0] != "")
-                {
-                    //Setup the arguments if any
-                    for (int counter = 0; counter < args.Length - 1; counter++)
-                    {
-                        string arg = tmpArgStack.Pop();
-                        argList.Remove(arg);    //Remove the argument from the original stack too
-                        function += arg + ",";
-                    }
-                    ArgStack = new Stack<string>(argList);  //rebuild the stack so we don't miss anything
-                }
-                else
-                {
-                    function += ",";    //Just append a random character
-                }
-                function = function.Remove(function.Length - 1) + ");";
-
-                //Return without setting up return values
-                if (earlyReturn) return function;
-
-                //Setup the return value cast
-                function = function.Replace(function.Split(' ')[0], "(" + function.Split(' ')[0] + ")");
-
-                //Remove extra data
-                function = function.Remove("class").Trim();
 
                 return function;
                 #endregion
