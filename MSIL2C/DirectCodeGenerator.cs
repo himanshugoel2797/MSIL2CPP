@@ -43,6 +43,11 @@ namespace MSIL2C
             
             Translators["stloc"] = (string s) =>
             {
+                if (s.StartsWith("stloc.s"))
+                {
+                    s = "stloc." + s.Remove("stloc.s");
+                }
+
                 string toRet = Vars["V_" + s.Remove("stloc.").Trim()] + " V_" + s.Remove("stloc.").Trim() + " = " + Args.Pop() + ";";
                 Vars["V_" + s.Remove("stloc.").Trim()] = "";
                 return new string[] {toRet, string.Empty};
@@ -125,19 +130,26 @@ namespace MSIL2C
             cs = new StringBuilder();
             hs = new StringBuilder();
 
+            //Must include headers - translate framework types and functions
+            hs.Append("#include \"types.h\"\n");
+
             hs.Append("namespace " + @namespace + " { \n class " + @class + "{ \n");
             RecurH.Push("}");
-            RecurH.Push("}");
+            RecurH.Push("};");
+
+            cs.AppendLine("#include \"" + @namespace + "_" + @class + ".h\"");
 
             for (lineNum = 0; lineNum < mi.Length; lineNum++)
             {
                 MethodInfo m = mi[lineNum];
                 MethodBodyReader r = new MethodBodyReader(m);
 
+                //Save the temporary MSIL
                 string methodname = m.Name;
                 string[] lines = r.GetBodyCode().Split('\n');
-                File.WriteAllText(Path.Combine("src/MSIL", @namespace + "_" + @class + ".MSIL"), r.GetBodyCode());
+                File.WriteAllText(Path.Combine("src/MSIL", @namespace + "_" + @class + "_" + methodname + ".MSIL"), r.GetBodyCode());
 
+                //Parse and setup function parameters
                 ParameterInfo[] @params = m.GetParameters();
                 string par = "";
                 if (@params.Length != 0)
@@ -150,15 +162,20 @@ namespace MSIL2C
                         Vars["v_" + tmp.ToString()] = @params[tmp].ParameterType.Name;
                     }
                 }
-                hs.AppendFormat("{0} {1}({2});", m.ReturnType.Name, m.Name, par);
+
+                //Setup function declaration in header
+                hs.AppendFormat("{0} {1}({2});", m.ReturnType.Namespace + "::" + m.ReturnType.Name, m.Name, par);
                 
-                cs.AppendLine(m.ReturnType.Name + " " + @namespace + "::" + @class + "::" + m.Name + "(" + par + "){" );
+                //Setup function definition in source
+                cs.AppendLine(m.ReturnType.Namespace + "::" + m.ReturnType.Name + " " + @namespace + "::" + @class + "::" + m.Name + "(" + par + "){" );
                 RecurC.Push("}");
 
+                //Define all variables
                 foreach (LocalVariableInfo locals in m.GetMethodBody().LocalVariables)
                 {
                     Vars.Add("V_" + locals.LocalIndex, locals.LocalType.Namespace + "::" + locals.LocalType.Name);
                     cs.AppendLine(locals.LocalType.Namespace + "::" + locals.LocalType.Name + " " + "V_" + locals.LocalIndex + ";");
+                    Vars["V_" + locals.LocalIndex] = "";
                 }
 
                 #region Generate code

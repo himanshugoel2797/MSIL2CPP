@@ -4,16 +4,15 @@ namespace Test
 {
     public static class Program
     {
-        public static void Main(string[] y)
+        public static void main()
         {
             int temp = 100;
             string t2 = "lol {0}";
-            string tmp;
-            Console.Write(t2, temp);
-            tmp = temp.ToString();
-            tmp += " ";
-            temp = temp - 50;
-            Console.Write(tmp, t2);
+            long tmp2 = 10;
+            uint @uint = 10;
+            short @short = 10;
+
+            Console.Write(t2);
         }
     }
 }

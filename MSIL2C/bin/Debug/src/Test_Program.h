@@ -1,7 +1,8 @@
+#include "types.h"
 namespace Test
 {
 class Program
 {
-    Void Main(String[] v_0);
-}
+    System::Void main();
+};
 }
