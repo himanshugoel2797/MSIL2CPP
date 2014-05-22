@@ -151,6 +151,7 @@ namespace MSIL2C
                 string tmp = ArgStack.Pop();
                 ArgStack.Push(tmp);
                 ArgStack.Push(tmp);
+                return string.Empty;
             };
             #endregion
         }

@@ -1,0 +1,3 @@
+Void Test::Program::Main()
+{
+}

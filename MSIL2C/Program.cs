@@ -16,7 +16,8 @@ namespace MSIL2C
         {
             string code = "";
 #if DEBUG && TESTS
-            code = IL.GetMSIL("Tests.dll");
+            var tmp = new IL("Tests.dll");
+            return;
 #elif DEBUG
             code = File.ReadAllText("tests.txt");
 #else

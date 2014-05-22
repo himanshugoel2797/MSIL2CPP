@@ -1,0 +1,10 @@
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\obj\Debug\SDILReader.csprojResolveAssemblyReference.cache
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\bin\Debug\SDILReader.dll
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\bin\Debug\SDILReader.pdb
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\obj\Debug\SDILReader.dll
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\obj\Debug\SDILReader.pdb
+C:\Users\Himanshu\Documents\Visual Studio 2012\Projects\MSIL2C\SDILReader\bin\Debug\SDILReader.dll
+C:\Users\Himanshu\Documents\Visual Studio 2012\Projects\MSIL2C\SDILReader\bin\Debug\SDILReader.pdb
+C:\Users\Himanshu\Documents\Visual Studio 2012\Projects\MSIL2C\SDILReader\obj\Debug\SDILReader.csprojResolveAssemblyReference.cache
+C:\Users\Himanshu\Documents\Visual Studio 2012\Projects\MSIL2C\SDILReader\obj\Debug\SDILReader.dll
+C:\Users\Himanshu\Documents\Visual Studio 2012\Projects\MSIL2C\SDILReader\obj\Debug\SDILReader.pdb

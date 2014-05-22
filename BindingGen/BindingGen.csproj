@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FB663834-33DB-4470-A6D6-E66260E946E3}</ProjectGuid>
+    <ProjectGuid>{0F45BBFC-F56A-4419-9109-B1EABD941FD3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MSIL2C</RootNamespace>
-    <AssemblyName>MSIL2C</AssemblyName>
+    <RootNamespace>BindingGen</RootNamespace>
+    <AssemblyName>BindingGen</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,35 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeGenerator.cs" />
-    <Compile Include="DirectCodeGenerator.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="IL.cs" />
+    <Compile Include="IFunctionTranslator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tokenizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="AStyle.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="monodis.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="tests.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SDILReader\SDILReader.csproj">
-      <Project>{4bd2cede-eea5-4e73-9bd3-3973977a4b24}</Project>
-      <Name>SDILReader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tests\Tests.csproj">
-      <Project>{82d8a221-1ea5-4b98-bf17-6d83b1c8c05c}</Project>
-      <Name>Tests</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

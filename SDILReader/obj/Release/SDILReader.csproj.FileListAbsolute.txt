@@ -1,0 +1,5 @@
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\bin\Release\SDILReader.dll
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\bin\Release\SDILReader.pdb
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\obj\Release\SDILReader.csprojResolveAssemblyReference.cache
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\obj\Release\SDILReader.dll
+C:\Users\Himanshu\Downloads\SDILReader\SDIL\SDILReader\obj\Release\SDILReader.pdb
