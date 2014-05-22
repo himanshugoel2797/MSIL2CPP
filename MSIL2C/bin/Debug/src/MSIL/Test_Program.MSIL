@@ -1,26 +1,23 @@
-0000 : nop
-0001 : ldc.i4.s100
-0003 : stloc.0
-0004 : ldstr "lol {0}"
-0009 : stloc.1
-0010 : ldloc.1
-0011 : ldloc.0
-0012 : box int
-0017 : call System.Void System.Console::Write()
-0022 : nop
-0023 : ldloca.s0
-0025 : call instance string int::ToString()
-0030 : stloc.2
-0031 : ldloc.2
-0032 : ldstr " "
-0037 : call string string::Concat()
-0042 : stloc.2
-0043 : ldloc.0
-0044 : ldc.i4.s50
-0046 : sub
-0047 : stloc.0
-0048 : ldloc.2
-0049 : ldloc.1
-0050 : call System.Void System.Console::Write()
-0055 : nop
-0056 : ret
+ldc.i4.s100
+stloc.0
+ldstr "lol {0}"
+stloc.1
+ldloc.1
+ldloc.0
+box int
+call System.Void System.Console::Write()
+ldloca.s0
+call instance string int::ToString()
+stloc.2
+ldloc.2
+ldstr " "
+call string string::Concat()
+stloc.2
+ldloc.0
+ldc.i4.s50
+sub
+stloc.0
+ldloc.2
+ldloc.1
+call System.Void System.Console::Write()
+ret

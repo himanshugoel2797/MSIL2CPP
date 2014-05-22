@@ -4,7 +4,7 @@ namespace Test
 {
     public static class Program
     {
-        public static void Main()
+        public static void Main(string[] y)
         {
             int temp = 100;
             string t2 = "lol {0}";

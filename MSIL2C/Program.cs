@@ -15,24 +15,13 @@ namespace MSIL2C
         static void Main(string[] args)
         {
             string code = "";
+            IL tmp;
 #if DEBUG && TESTS
-            var tmp = new IL("Tests.dll");
-            return;
-#elif DEBUG
-            code = File.ReadAllText("tests.txt");
+            tmp = new IL("Tests.dll");
 #else
-            code = IL.GetMSIL(args[0]);
+              tmp = new IL(args[0]);
 #endif
-            Tokenizer t = new Tokenizer();
-            string xml = t.Tokenize(code);
-            File.Delete("output.txt");
-            File.WriteAllText("output.txt", xml);
-#if DEBUG && TESTS
-            Process.Start("notepad.exe", "temp.txt");
-            Process.Start("notepad.exe", "output.txt");
-#endif
-            CodeGenerator gen = new CodeGenerator();
-            string final = gen.GenerateCode(xml);
+            return;
         }
     }
 }

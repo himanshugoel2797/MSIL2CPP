@@ -1,0 +1,8 @@
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\bin\Debug\BindingGen.exe.config
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\bin\Debug\BindingGen.exe
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\bin\Debug\BindingGen.pdb
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\bin\Debug\TestBinding.dll
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\bin\Debug\TestBinding.pdb
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\obj\Debug\BindingGen.csprojResolveAssemblyReference.cache
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\obj\Debug\BindingGen.exe
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\BindingGen\obj\Debug\BindingGen.pdb

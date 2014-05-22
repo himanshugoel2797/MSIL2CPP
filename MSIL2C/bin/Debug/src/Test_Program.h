@@ -2,6 +2,6 @@ namespace Test
 {
 class Program
 {
-    Void Main();
+    Void Main(String[] v_0);
 }
 }

@@ -20,6 +20,7 @@ namespace MSIL2C
         public delegate string[] IL2C(string line);
         Dictionary<string, IL2C> Translators;
         Dictionary<string, string> Vars;
+        int lineNum = 0;
 
         public DirectCodeGenerator() 
         {
@@ -46,6 +47,7 @@ namespace MSIL2C
                 Vars["V_" + s.Remove("stloc.").Trim()] = "";
                 return new string[] {toRet, string.Empty};
             };
+
             Translators["ldloc"] = (string s) =>
             {
                 if (s.StartsWith("ldloca.s"))
@@ -58,46 +60,49 @@ namespace MSIL2C
                 }
                 return Empty;
             };
+
             Translators["ldc.i4.s"] = (string s) =>
             {
                 Args.Push(s.Remove("ldc.i4.s").Trim());
                 return Empty;
             };
+
             Translators["ldc.i4.m1"] = (string s) =>
             {
                 Args.Push("-1");
                 return Empty;
             };
-            Translators["ldc.i4."] = (string s) =>
-            {
-                Args.Push(s.Remove("ldc.i4.").Trim());
-                return Empty;
-            };
+
             Translators["add"] = (string s) =>
             {
                 Args.Push(Args.Pop() + " + " + Args.Pop());
                 return Empty;
             };
+
             Translators["sub"] = (string s) =>
             {
                 Args.Push("-" + Args.Pop() + " + " + Args.Pop());
                 return Empty;
             };
+
             Translators["mul"] = (string s) =>
             {
                 Args.Push(Args.Pop() + " * " + Args.Pop());
                 return Empty;
             };
+
             Translators["rem"] = (string s) =>
             {
                 Args.Push(Args.Pop() + " % " + Args.Pop());
                 return Empty;
             };
+
             Translators["div"] = (string s) =>
             {
                 Args.Push("(1/" + Args.Pop() + ") * " + Args.Pop());
                 return Empty;
             };
+
             Translators["dup"] = (string s) =>
             {
                 string tmp = Args.Pop();
@@ -124,9 +129,9 @@ namespace MSIL2C
             RecurH.Push("}");
             RecurH.Push("}");
 
-            for (int counter = 0; counter < mi.Length; counter++)
+            for (lineNum = 0; lineNum < mi.Length; lineNum++)
             {
-                MethodInfo m = mi[counter];
+                MethodInfo m = mi[lineNum];
                 MethodBodyReader r = new MethodBodyReader(m);
 
                 string methodname = m.Name;
@@ -150,14 +155,20 @@ namespace MSIL2C
                 cs.AppendLine(m.ReturnType.Name + " " + @namespace + "::" + @class + "::" + m.Name + "(" + par + "){" );
                 RecurC.Push("}");
 
+                foreach (LocalVariableInfo locals in m.GetMethodBody().LocalVariables)
+                {
+                    Vars.Add("V_" + locals.LocalIndex, locals.LocalType.Namespace + "::" + locals.LocalType.Name);
+                    cs.AppendLine(locals.LocalType.Namespace + "::" + locals.LocalType.Name + " " + "V_" + locals.LocalIndex + ";");
+                }
+
                 #region Generate code
-                for (int lineNum = 0; lineNum < lines.Length; lineNum++)
+                for (lineNum = 0; lineNum < lines.Length; lineNum++)
                 {
                     //skip empty lines
                     if (lines[lineNum].Trim() != string.Empty)
                     {
                         //Remove all whitespace from the string
-                        string line = lines[lineNum].Replace("\"", "&quot;").Trim();
+                        string line = lines[lineNum].Trim();
                         //Check if the line is of any interest to us
                         foreach (string key in Translators.Keys)
                         {

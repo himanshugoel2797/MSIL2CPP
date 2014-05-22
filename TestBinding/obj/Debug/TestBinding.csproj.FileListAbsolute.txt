@@ -1,0 +1,5 @@
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\TestBinding\bin\Debug\TestBinding.dll
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\TestBinding\bin\Debug\TestBinding.pdb
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\TestBinding\obj\Debug\TestBinding.csprojResolveAssemblyReference.cache
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\TestBinding\obj\Debug\TestBinding.dll
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\TestBinding\obj\Debug\TestBinding.pdb
