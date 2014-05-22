@@ -14,20 +14,20 @@ namespace MSIL2C
         {
             Process p = new Process();
             p.StartInfo.FileName = "monodis";
-            p.StartInfo.Arguments = "\"" + file + "\"";
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.Arguments = "--output=temp.txt \"" + file + "\"";
+            //p.StartInfo.UseShellExecute = false;
+            //p.StartInfo.RedirectStandardOutput = true;
+            //p.StartInfo.CreateNoWindow = true;
             p.Start();
             
-            string toRet = p.StandardOutput.ReadLine();
-            while (!p.HasExited && !p.StandardOutput.EndOfStream)
+            string toRet = "";
+            while (!p.HasExited)
             {
-                toRet += p.StandardOutput.ReadLine();
+                //toRet += p.StandardOutput.ReadLine();
             }
-            toRet += p.StandardOutput.ReadToEnd();
+            toRet = File.ReadAllText("temp.txt");
 #if DEBUG
-            File.WriteAllText("temp.txt", toRet);
+            //File.WriteAllText("temp.txt", toRet);
 #endif
             return toRet;
         }

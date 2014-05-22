@@ -12,6 +12,7 @@ namespace Test
             Console.Write(t2, temp);
             tmp = temp.ToString();
             tmp += " ";
+            temp = temp - 50;
             Console.Write(tmp, t2);
         }
     }

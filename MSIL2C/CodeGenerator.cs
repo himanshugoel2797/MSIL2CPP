@@ -49,9 +49,9 @@ namespace MSIL2C
                 }
 
                 string retVal = function.Split(' ')[0].Trim();
-                int argc = (args == "")? 0: args.Split(',').Length;
+                int argc = (args == "") ? 0 : args.Split(',').Length;
                 string funcName = function.Remove(function.IndexOf(retVal), retVal.Length).Remove("(" + args + ")").Trim();
-                if(!isInstance)funcName = funcName.Replace(".", "::");
+                if (!isInstance) funcName = funcName.Replace(".", "::");
 
                 function = funcName + "(";
                 if (argc > 0)
@@ -100,16 +100,57 @@ namespace MSIL2C
                 {
                     ArgStack.Push("V_" + s.Remove("ldloca.s").Trim());
                 }
-                else if(s.StartsWith("ldloc."))
+                else if (s.StartsWith("ldloc."))
                 {
                     ArgStack.Push("V_" + s.Remove("ldloc.").Trim());
                 }
-                    return string.Empty;
+                return string.Empty;
             };
             ILTranslators["ldc.i4.s"] = (string s) =>
             {
                 ArgStack.Push(s.Remove("ldc.i4.s").Trim());
                 return string.Empty;
+            };
+            ILTranslators["ldc.i4.m1"] = (string s) =>
+            {
+                ArgStack.Push("-1");
+                return string.Empty;
+            };
+            ILTranslators["ldc.i4."] = (string s) =>
+            {
+                ArgStack.Push(s.Remove("ldc.i4.").Trim());
+                return string.Empty;
+            };
+            ILTranslators["add"] = (string s) =>
+            {
+                ArgStack.Push(ArgStack.Pop() + " + " + ArgStack.Pop());
+                return string.Empty;
+            };
+            ILTranslators["sub"] = (string s) =>
+            {
+                ArgStack.Push("-" + ArgStack.Pop() + " + " + ArgStack.Pop());
+                return string.Empty;
+            };
+            ILTranslators["mul"] = (string s) =>
+            {
+                ArgStack.Push(ArgStack.Pop() + " * " + ArgStack.Pop());
+                return string.Empty;
+            };
+            ILTranslators["rem"] = (string s) =>
+            {
+                ArgStack.Push(ArgStack.Pop() + " % " + ArgStack.Pop());
+                return string.Empty;
+            };
+            ILTranslators["div"] = (string s) =>
+            {
+                ArgStack.Push("(1/" + ArgStack.Pop() + ") * " + ArgStack.Pop());
+                return string.Empty;
+            };
+            ILTranslators["dup"] = (string s) =>
+            {
+                string tmp = ArgStack.Pop();
+                ArgStack.Push(tmp);
+                ArgStack.Push(tmp);
             };
             #endregion
         }
@@ -128,6 +169,10 @@ namespace MSIL2C
             string @namespace = "";
             string @class = "";
 
+
+            if (!Directory.Exists("src")) Directory.CreateDirectory("src");
+            Array.ForEach(Directory.GetFiles(@"src"), delegate(string path) { File.Delete(path); });
+
             #region Usings and stuff
             using (MemoryStream ms = new MemoryStream(Encoding.ASCII.GetBytes(xml)))
             {
@@ -143,9 +188,24 @@ namespace MSIL2C
                             {
                                 case "namespace":
                                     #region Files
-                                    if (!Directory.Exists("src")) Directory.CreateDirectory("src");
-                                    Array.ForEach(Directory.GetFiles(@"src"), delegate(string path) { File.Delete(path); });
+                                    if (f != null)
+                                    {
+                                        while (DepthF.Count > 0)
+                                        {
+                                            f.WriteLine(DepthF.Pop());
+                                        }
+                                        f.Dispose();
+                                    }
                                     f = new StreamWriter(Path.Combine("src", doc["NAME"] + ".cpp"));
+
+                                    if (h != null)
+                                    {
+                                        while (DepthH.Count > 0)
+                                        {
+                                            h.WriteLine(DepthH.Pop());
+                                        }
+                                        h.Dispose();
+                                    }
                                     h = new StreamWriter(Path.Combine("src", doc["NAME"] + ".h"));
                                     #endregion
 

@@ -7,5 +7,6 @@ string v_0 = V_0.ToString();
 string V_2 = v_0;
 string v_1 = string::Concat(V_2, " ");
  V_2 = v_1;
+ V_0 = -0x32 + V_0;
 System::Console::Write(V_2, V_1);
 }

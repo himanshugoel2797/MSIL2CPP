@@ -23,6 +23,10 @@
 <IL instruction="ldstr &quot; &quot;"></IL>
 <IL instruction="call string string::Concat(string, string)"></IL>
 <IL instruction="stloc.2"></IL>
+<IL instruction="ldloc.0"></IL>
+<IL instruction="ldc.i4.s 0x32"></IL>
+<IL instruction="sub"></IL>
+<IL instruction="stloc.0"></IL>
 <IL instruction="ldloc.2"></IL>
 <IL instruction="ldloc.1"></IL>
 <IL instruction="call void class [mscorlib]System.Console::Write(string, object)"></IL>
