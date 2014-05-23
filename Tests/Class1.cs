@@ -11,7 +11,7 @@ namespace Test
             long tmp2 = 10;
             uint @uint = 10;
             short @short = 10;
-
+            if (temp > 99) tmp2 = 50;
             Console.Write(t2);
         }
     }

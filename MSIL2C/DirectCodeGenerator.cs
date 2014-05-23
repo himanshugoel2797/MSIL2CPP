@@ -15,12 +15,16 @@ namespace MSIL2C
         static string[] Empty = new string[] {string.Empty, string.Empty};
 
         Stack<string> RecurC, RecurH, Args;
+        Stack<int> backupOffset;
+        Stack<bool> @else;
         StreamWriter c, h;
         StringBuilder cs, hs;
         public delegate string[] IL2C(string line);
         Dictionary<string, IL2C> Translators;
         Dictionary<string, string> Vars;
-        int lineNum = 0;
+        int lineNum = 0,tmpVarCount = 0;
+        long curOffset = 0;
+        string[] lines;
 
         public DirectCodeGenerator() 
         {
@@ -29,6 +33,8 @@ namespace MSIL2C
             Args = new Stack<string>();
             Vars = new Dictionary<string, string>();
             Translators = new Dictionary<string, IL2C>();
+            backupOffset = new Stack<int>();
+            @else = new Stack<bool>();
             #region Translators
             Translators["nop"] = (string s) =>
             {
@@ -53,12 +59,39 @@ namespace MSIL2C
                 return new string[] {toRet, string.Empty};
             };
 
+            Translators["call"] = (string s) =>
+            {
+                string func = s.Remove("call").Remove(")").Trim();
+                string retType = func.Split(' ')[0];
+                func = func.Replace(".", "::").Split(' ')[1];
+
+                List<string> tmp = Args.ToList();
+                tmp.Reverse();
+                while(tmp.Count > 0){
+                    func += tmp[0] + ",";
+                    tmp.RemoveAt(0);
+                }
+                Args = new Stack<string>(tmp);
+
+                func = func.Remove(func.Length - 1) + ");";
+
+                if (retType != "System.Void")
+                {
+                    func = retType + " v_" + tmpVarCount.ToString() + " = " + func;
+                    Args.Push("v_" + tmpVarCount);
+                    tmpVarCount++;
+                }
+
+                return new string[] {func, string.Empty};
+            };
+
             Translators["ldloc"] = (string s) =>
             {
                 if (s.StartsWith("ldloca.s"))
                 {
                     Args.Push("V_" + s.Remove("ldloca.s").Trim());
                 }
+                else if (s.StartsWith("ldloc.s")) Args.Push("V_" + s.Remove("ldloc.s").Trim());
                 else if (s.StartsWith("ldloc."))
                 {
                     Args.Push("V_" + s.Remove("ldloc.").Trim());
@@ -66,15 +99,13 @@ namespace MSIL2C
                 return Empty;
             };
 
-            Translators["ldc.i4.s"] = (string s) =>
+            Translators["ldc.i4."] = (string s) =>
             {
-                Args.Push(s.Remove("ldc.i4.s").Trim());
-                return Empty;
-            };
+                s = s.Remove("ldc.i4.");
 
-            Translators["ldc.i4.m1"] = (string s) =>
-            {
-                Args.Push("-1");
+                if (s.StartsWith("s")) Args.Push(s.Remove("s").Trim());
+                else if (s.StartsWith("m1")) Args.Push("-1");
+                else Args.Push(s);
                 return Empty;
             };
 
@@ -115,7 +146,47 @@ namespace MSIL2C
                 Args.Push(tmp);
                 return Empty;
             };
+
+            Translators["cgt"] = (string s) =>
+            {
+                string tmp = "bool v_" + tmpVarCount + " = (" + Args.Pop() + " < " + Args.Pop() + "); ";
+                Args.Push("v_" + tmpVarCount);
+                tmpVarCount++;
+                return new string[] { tmp, string.Empty };
+            };
+
+            Translators["ceq"] = (string s) =>
+            {
+
+                string tmp = "bool v_" + tmpVarCount + " = (" + Args.Pop() + " == " + Args.Pop() + "); ";
+                Args.Push("v_" + tmpVarCount);
+                tmpVarCount++;
+                return new string[] { tmp, string.Empty };
+            };
+
+            Translators["brtrue"] = (string s) =>
+            {
+                s = s.Remove("brtrue");
+                if (s.StartsWith(".s"))
+                {
+                    backupOffset.Push(lineNum + 1);
+                    @else.Push(true);
+                    lineNum = GetIndexOfOffset(long.Parse(s.Remove(".s").Trim())) - 1;
+                }
+
+                RecurC.Push("}");
+                return new string[] {"if (" + Args.Pop() + " != 0){", string.Empty};
+            };
             #endregion
+        }
+
+        public int GetIndexOfOffset(long offset)
+        {
+            for (int tmp = 0; tmp < lines.Length; tmp++)
+            {
+                if (lines[tmp].StartsWith(offset.ToString("D4"))) return tmp;
+            }
+            return -1;
         }
 
         public void Generate(MethodInfo[] mi)
@@ -131,7 +202,7 @@ namespace MSIL2C
             hs = new StringBuilder();
 
             //Must include headers - translate framework types and functions
-            hs.Append("#include \"types.h\"\n");
+            hs.Append("#include \"..\\Framework\\types.h\"\n");
 
             hs.Append("namespace " + @namespace + " { \n class " + @class + "{ \n");
             RecurH.Push("}");
@@ -146,7 +217,7 @@ namespace MSIL2C
 
                 //Save the temporary MSIL
                 string methodname = m.Name;
-                string[] lines = r.GetBodyCode().Split('\n');
+                lines = r.GetBodyCode().Split('\n');
                 File.WriteAllText(Path.Combine("src/MSIL", @namespace + "_" + @class + "_" + methodname + ".MSIL"), r.GetBodyCode());
 
                 //Parse and setup function parameters
@@ -178,27 +249,54 @@ namespace MSIL2C
                     Vars["V_" + locals.LocalIndex] = "";
                 }
 
+                bool exit = false;
                 #region Generate code
-                for (lineNum = 0; lineNum < lines.Length; lineNum++)
+                lineNum = 0;
+                do
                 {
-                    //skip empty lines
-                    if (lines[lineNum].Trim() != string.Empty)
+                    for (; lineNum < lines.Length; lineNum++)
                     {
-                        //Remove all whitespace from the string
-                        string line = lines[lineNum].Trim();
-                        //Check if the line is of any interest to us
-                        foreach (string key in Translators.Keys)
+                        //skip empty lines
+                        if (lines[lineNum].Trim() != string.Empty)
                         {
-                            //if it is, call the appropriate handler and update the tokens
-                            if (line.StartsWith(key))
+                            //Remove all whitespace from the string
+                            string line = lines[lineNum].Trim();
+
+                            //Get the offset
+                            curOffset = long.Parse(line.Split(':')[0]);
+                            line = line.Remove(line.Split(':')[0] + ":").Trim();
+
+                            //Check if the line is of any interest to us
+                            foreach (string key in Translators.Keys)
                             {
-                                string[] f = Translators[key](line);
-                                if (!string.IsNullOrWhiteSpace(f[0])) cs.AppendLine(f[0]);
-                                if (!string.IsNullOrWhiteSpace(f[1])) hs.AppendLine(f[1]);
+                                //if it is, call the appropriate handler and update the tokens
+                                if (line.StartsWith(key))
+                                {
+                                    string[] f = Translators[key](line);
+                                    if (!string.IsNullOrWhiteSpace(f[0])) cs.AppendLine(f[0]);
+                                    if (!string.IsNullOrWhiteSpace(f[1])) hs.AppendLine(f[1]);
+                                }
                             }
                         }
                     }
-                }
+
+                    if (backupOffset.Count > 0)
+                    {
+                        lineNum = backupOffset.Pop();
+                    }
+                    else
+                    {
+                        exit = true;
+                    }
+
+                    if (@else.Count > 0)
+                    {
+                        if (@else.Pop())
+                        {
+                            cs.AppendLine(RecurC.Pop() + " else { ");
+                        }
+                    }
+                } while (!exit);
                 #endregion
 
                 #region Header Recursion tree

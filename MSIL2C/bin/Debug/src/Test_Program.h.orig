@@ -1,5 +1,5 @@
-#include "types.h"
+#include "..\Framework\types.h"
 namespace Test { 
  class Program{ 
-System::Void main();}
-};
+System::Void main();};
+}

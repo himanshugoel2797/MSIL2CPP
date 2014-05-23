@@ -45,7 +45,7 @@ namespace SDILReader
         public string GetCode()
         {
             string result = "";
-            result += code;
+            result += GetExpandedOffset(offset) + ":" + code;
             if (operand != null)
             {
                 switch (code.OperandType)

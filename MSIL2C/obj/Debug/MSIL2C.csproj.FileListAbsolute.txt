@@ -10,3 +10,4 @@ c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\MSIL2C\bin\Debug\
 c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\MSIL2C\bin\Debug\AStyle.exe
 c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\MSIL2C\bin\Debug\SDILReader.dll
 c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\MSIL2C\bin\Debug\SDILReader.pdb
+c:\Users\Himanshu\documents\visual studio 2012\Projects\MSIL2C\MSIL2C\bin\Debug\Framework\types.h

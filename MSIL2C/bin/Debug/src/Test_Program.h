@@ -1,4 +1,4 @@
-#include "types.h"
+#include "..\Framework\types.h"
 namespace Test
 {
 class Program

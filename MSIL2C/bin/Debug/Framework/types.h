@@ -1,3 +1,6 @@
+﻿#ifndef _MSIL_TYPES_
+#define _MSIL_TYPES_
+
 #include <string>
 #include <stdio.h>
 
@@ -10,3 +13,5 @@ typedef long Int64;
 typedef std::string String;
 typedef void Void;
 }
+
+#endif
